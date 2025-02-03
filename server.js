@@ -8,7 +8,7 @@
 *  Student ID: 150401230  
 *  Date: February 3, 2025
 *  Cyclic Web App URL:  
-*  GitHub Repository URL: https://github.senecapolytechnic.ca/rsalvador5/web322-assignment2
+*  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
 
 const express = require("express");
