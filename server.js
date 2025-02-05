@@ -7,7 +7,7 @@
 *  Name: Rizza Salvador  
 *  Student ID: 150401230  
 *  Date: February 5, 2025
-*  Cyclic Web App URL:  https://replit.com/@rizza4red/web322-app
+*  Replit Web App URL:  https://replit.com/@rizza4red/web322-app
 *  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
 
