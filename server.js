@@ -10,9 +10,7 @@
 *  Replit Web App URL:  https://replit.com/@rizza4red/web322-app
 *  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
-
 const express = require("express");
-const path = require("path");
 const storeService = require("./store-service");
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -20,50 +18,37 @@ const PORT = process.env.PORT || 8080;
 app.use(express.static("public"));
 
 app.get("/", (req, res) => res.redirect("/about"));
-app.get("/about", (req, res) =>
-  res.sendFile(path.join(__dirname, "views", "about.html"))
-);
-app.get("/shop", (req, res) =>
-  res.sendFile(path.join(__dirname, "views", "shop.html"))
-);
-app.get("/items", (req, res) =>
-  res.sendFile(path.join(__dirname, "views", "items.html"))
-);
-app.get("/categories", (req, res) =>
-  res.sendFile(path.join(__dirname, "views", "categories.html"))
-);
+
+app.get("/about", (req, res) => res.sendFile(__dirname + "/views/about.html"));
+app.get("/shop", (req, res) => res.sendFile(__dirname + "/views/shop.html"));
+app.get("/items", (req, res) => res.sendFile(__dirname + "/views/items.html"));
+app.get("/categories", (req, res) => res.sendFile(__dirname + "/views/categories.html"));
 
 app.get("/api/items", (req, res) => {
-  storeService
-    .getAllItems()
-    .then((data) => res.json(data))
-    .catch((err) => res.status(500).json({ message: `Error: ${err}` }));
+    storeService.getAllItems()
+        .then(data => res.json(data))
+        .catch(err => res.status(500).json({ message: "No items available" }));
 });
-
 app.get("/api/items/published", (req, res) => {
-  storeService
-    .getPublishedItems()
-    .then((data) => res.json(data))
-    .catch((err) => res.status(500).json({ message: `Error: ${err}` }));
+    storeService.getPublishedItems()
+        .then(data => res.json(data))
+        .catch(err => res.status(500).json({ message: "No published items available" }));
 });
-
 app.get("/api/categories", (req, res) => {
-  storeService
-    .getCategories()
-    .then((data) => res.json(data))
-    .catch((err) => res.status(500).json({ message: `Error: ${err}` }));
+    storeService.getCategories()
+        .then(data => res.json(data))
+        .catch(err => res.status(500).json({ message: "No categories available" }));
 });
 
 app.use((req, res) => {
-  res.status(404).json({ message: `Route not found: ${req.originalUrl}` });
+    res.status(404).json({ message: "Page Not Found" });
 });
 
-storeService
-  .initialize()
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error(`Failed to start server due to initialization error: ${err}`);
-    process.exit(1);
-  });
+storeService.initialize()
+    .then(() => {
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch(err => {
+        console.error(`Failed to start server: ${err}`);
+        process.exit(1);
+    });
