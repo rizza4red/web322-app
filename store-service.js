@@ -6,27 +6,35 @@ let categories = [];
 
 const initialize = () => {
   return new Promise((resolve, reject) => {
-    fs.readFile(path.join(process.cwd(), "data", "items.json"), "utf8", (err, data) => {
-      if (err) return reject("Unable to read items file");
-
-      try {
-        items = JSON.parse(data);
-      } catch (error) {
-        return reject("Error parsing items.json");
-      }
-
-      fs.readFile(path.join(process.cwd(), "data", "categories.json"), "utf8", (err, data) => {
-        if (err) return reject("Unable to read categories file");
+    fs.readFile(
+      path.join(process.cwd(), "data", "items.json"),
+      "utf8",
+      (err, data) => {
+        if (err) return reject("Unable to read items file");
 
         try {
-          categories = JSON.parse(data);
+          items = JSON.parse(data);
         } catch (error) {
-          return reject("Error parsing categories.json");
+          return reject("Error parsing items.json");
         }
 
-        resolve();
-      });
-    });
+        fs.readFile(
+          path.join(process.cwd(), "data", "categories.json"),
+          "utf8",
+          (err, data) => {
+            if (err) return reject("Unable to read categories file");
+
+            try {
+              categories = JSON.parse(data);
+            } catch (error) {
+              return reject("Error parsing categories.json");
+            }
+
+            resolve();
+          }
+        );
+      }
+    );
   });
 };
 
