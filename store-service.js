@@ -29,3 +29,23 @@ const initialize = () => {
         });
     });
 };
+
+const getAllItems = () => new Promise((resolve, reject) => {
+    items.length > 0 ? resolve(items) : reject("No results returned");
+});
+
+const getPublishedItems = () => new Promise((resolve, reject) => {
+    const publishedItems = items.filter(item => item.published);
+    publishedItems.length > 0 ? resolve(publishedItems) : reject("No published items available");
+});
+
+const getCategories = () => new Promise((resolve, reject) => {
+    categories.length > 0 ? resolve(categories) : reject("No categories available");
+});
+
+module.exports = {
+    initialize,
+    getAllItems,
+    getPublishedItems,
+    getCategories
+};
