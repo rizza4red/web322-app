@@ -6,7 +6,7 @@
 *
 *  Name: Rizza Salvador  
 *  Student ID: 150401230  
-*  Date: February 5, 2025
+*  Date: February 6, 2025
 *  Render Web App URL:  https://web322-app-dbb2.onrender.com
 *  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
