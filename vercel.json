@@ -11,5 +11,5 @@
       "dest": "server.js"
     }
   ],
-  "includeFiles": ["data/items.json", "data/categories.json"]
+
 }
