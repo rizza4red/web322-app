@@ -55,16 +55,22 @@ const addItem = (itemData) => {
 
         items.push(itemData);
 
+
         fs.writeFile(
             path.join(process.cwd(), "data", "items.json"),
             JSON.stringify(items, null, 4),
             (err) => {
-                if (err) return reject("Unable to save item.");
+                if (err) {
+                    console.error("Error saving item:", err);
+                    return reject("Unable to save item.");
+                }
+                console.log("✅ Item saved to items.json:", itemData); 
                 resolve(itemData);
             }
         );
     });
 };
+
 
 const getItemsByCategory = (category) => {
     return new Promise((resolve, reject) => {
