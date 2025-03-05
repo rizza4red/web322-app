@@ -7,8 +7,8 @@
 *  Name: Rizza Salvador  
 *  Student ID: 150401230  
 *  Date: March 4, 2025
-*  Cyclic Web App URL: 
-*  GitHub Repository URL: 
+*  Render Web App URL: https://web322-app-dbb2.onrender.com
+*  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
 
 const express = require("express");
