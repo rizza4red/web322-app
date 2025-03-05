@@ -6,9 +6,9 @@
 *
 *  Name: Rizza Salvador  
 *  Student ID: 150401230  
-*  Date: [INSERT DATE]
-*  Cyclic Web App URL: [INSERT URL]
-*  GitHub Repository URL: [INSERT URL]
+*  Date: March 4, 2025
+*  Cyclic Web App URL: 
+*  GitHub Repository URL: 
 **********************************************************************************/
 
 const express = require("express");
@@ -31,7 +31,6 @@ const upload = multer();
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve Static Pages
 app.get("/", (req, res) => res.redirect("/about"));
 app.get("/about", (req, res) => res.sendFile(__dirname + "/views/about.html"));
 app.get("/shop", (req, res) => res.sendFile(__dirname + "/views/shop.html"));
@@ -39,7 +38,6 @@ app.get("/items", (req, res) => res.sendFile(__dirname + "/views/items.html"));
 app.get("/categories", (req, res) => res.sendFile(__dirname + "/views/categories.html"));
 app.get("/items/add", (req, res) => res.sendFile(__dirname + "/views/addItem.html"));
 
-// API Routes
 app.get("/api/items", (req, res) => {
     if (req.query.category) {
         storeService.getItemsByCategory(req.query.category)
@@ -92,7 +90,6 @@ app.get("/api/categories", (req, res) => {
         });
 });
 
-// Add New Item (POST Request)
 app.post("/items/add", upload.single("featureImage"), (req, res) => {
     if (req.file) {
         let streamUpload = (req) => {
@@ -135,7 +132,6 @@ app.use((req, res) => {
     res.status(404).json({ message: "Page Not Found" });
 });
 
-// Initialize Store Service
 storeService.initialize()
     .then(() => {
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

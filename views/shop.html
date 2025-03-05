@@ -28,21 +28,19 @@
     <main class="container" style="padding-top: 90px;">
         <h1 class="text-center">Shop</h1>
         <div class="row" id="shopItemsContainer">
-            <!-- Published items will be dynamically inserted here -->
         </div>
     </main>
 
     <footer class="text-center py-3">&copy; 2025 WEB322 Assignment</footer>
 
     <script>
-        // Fetch and display published items dynamically
         async function fetchPublishedItems() {
             try {
-                let response = await fetch("/api/items/published"); // Fetch only published items
+                let response = await fetch("/api/items/published"); 
                 let items = await response.json();
 
                 let shopItemsContainer = document.getElementById("shopItemsContainer");
-                shopItemsContainer.innerHTML = ""; // Clear existing items
+                shopItemsContainer.innerHTML = "";
 
                 if (!items.length) {
                     shopItemsContainer.innerHTML = "<p class='text-center'>No items available for sale.</p>";
@@ -69,7 +67,6 @@
             }
         }
 
-        // Load published items on page load
         window.onload = fetchPublishedItems;
     </script>
 </body>

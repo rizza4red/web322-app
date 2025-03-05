@@ -28,8 +28,7 @@
 
     <main class="container" style="padding-top: 90px;">
         <h1 class="text-center">Available Items</h1>
-        
-        <!-- Filtering Form -->
+
         <form id="filterForm" class="mb-3">
             <label for="category">Filter by Category:</label>
             <select id="category" class="form-control">
@@ -43,14 +42,12 @@
         </form>
 
         <div class="row" id="itemsContainer">
-            <!-- Items will be dynamically inserted here -->
         </div>
     </main>
 
     <footer class="text-center py-3">&copy; 2025 WEB322 Assignment</footer>
 
     <script>
-        // Fetch and display items dynamically
         async function fetchItems(category = "", minDate = "") {
             try {
                 let url = "/api/items";
@@ -61,7 +58,7 @@
                 let items = await response.json();
 
                 let itemsContainer = document.getElementById("itemsContainer");
-                itemsContainer.innerHTML = ""; // Clear any existing items
+                itemsContainer.innerHTML = ""; 
 
                 if (!items.length) {
                     itemsContainer.innerHTML = "<p class='text-center'>No items available.</p>";
@@ -69,7 +66,7 @@
                 }
 
                 items.forEach(item => {
-                    if (!item.published) return; // Show only published items
+                    if (!item.published) return; 
                     let itemCard = `
                         <div class="col-md-4">
                             <div class="card">
@@ -91,7 +88,6 @@
             }
         }
 
-        // Function to fetch categories and populate dropdown
         async function fetchCategories() {
             try {
                 let response = await fetch("/api/categories");
@@ -118,17 +114,15 @@
             return window.categoriesMap ? window.categoriesMap[categoryId] || "Unknown" : "Loading...";
         }
 
-        // Apply filters based on user selection
         function applyFilters() {
             let selectedCategory = document.getElementById("category").value;
             let minDate = document.getElementById("minDate").value;
             fetchItems(selectedCategory, minDate);
         }
 
-        // Load items and categories on page load
         window.onload = async () => {
-            await fetchCategories(); // Load categories first
-            await fetchItems();      // Then load items
+            await fetchCategories(); 
+            await fetchItems();      
         };
     </script>
 </body>

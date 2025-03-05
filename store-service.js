@@ -51,7 +51,7 @@ const addItem = (itemData) => {
     return new Promise((resolve, reject) => {
         itemData.published = itemData.published ? true : false;
         itemData.id = items.length + 1;
-        itemData.postDate = new Date().toISOString().split("T")[0]; // Set current date
+        itemData.postDate = new Date().toISOString().split("T")[0]; 
 
         items.push(itemData);
 
