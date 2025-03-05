@@ -51,8 +51,14 @@
         async function fetchItems(category = "", minDate = "") {
             try {
                 let url = "/api/items";
-                if (category) url += `?category=${category}`;
-                else if (minDate) url += `?minDate=${minDate}`;
+                if (category && minDate) {
+                    url += `?category=${category}&minDate=${minDate}`;
+                } else if (category) {
+                    url += `?category=${category}`;     
+                } else if (minDate) {
+                    url += `?minDate=${minDate}`;
+                }
+
 
                 let response = await fetch(url);
                 let items = await response.json();
@@ -115,10 +121,21 @@
         }
 
         function applyFilters() {
-            let selectedCategory = document.getElementById("category").value;
-            let minDate = document.getElementById("minDate").value;
-            fetchItems(selectedCategory, minDate);
-        }
+    let selectedCategory = document.getElementById("category").value;
+    let minDateInput = document.getElementById("minDate").value;
+
+    if (minDateInput) {
+        let formattedDate = new Date(minDateInput).toISOString().split("T")[0]; // Ensure YYYY-MM-DD format
+        fetchItems(selectedCategory, formattedDate);
+    } else {
+        fetchItems(selectedCategory, ""); 
+    }
+}
+
+
+
+
+
 
         window.onload = async () => {
             await fetchCategories(); 

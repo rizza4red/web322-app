@@ -38,93 +38,82 @@ app.get("/items", (req, res) => res.sendFile(__dirname + "/views/items.html"));
 app.get("/categories", (req, res) => res.sendFile(__dirname + "/views/categories.html"));
 app.get("/items/add", (req, res) => res.sendFile(__dirname + "/views/addItem.html"));
 
-app.get("/api/items", (req, res) => {
-    if (req.query.category) {
-        storeService.getItemsByCategory(req.query.category)
-            .then(data => res.json(data))
-            .catch(err => {
-                console.error("Error in /api/items?category:", err);
-                res.status(500).json({ message: err });
-            });
-    } else if (req.query.minDate) {
-        storeService.getItemsByMinDate(req.query.minDate)
-            .then(data => res.json(data))
-            .catch(err => {
-                console.error("Error in /api/items?minDate:", err);
-                res.status(500).json({ message: err });
-            });
-    } else {
-        storeService.getAllItems()
-            .then(data => res.json(data))
-            .catch(err => {
-                console.error("Error in /api/items:", err);
-                res.status(500).json({ message: "No items available" });
-            });
-    }
-});
+app.get("/api/items", async (req, res) => {
+    let { category, minDate } = req.query;
 
-app.get("/api/item/:id", (req, res) => {
-    storeService.getItemById(req.params.id)
-        .then(data => res.json(data))
-        .catch(err => {
-            console.error(`Error in /api/item/${req.params.id}:`, err);
-            res.status(500).json({ message: "No result found" });
-        });
-});
+    try {
+        let items = await storeService.getAllItems();
 
-app.get("/api/items/published", (req, res) => {
-    storeService.getPublishedItems()
-        .then(data => res.json(data))
-        .catch(err => {
-            console.error("Error in /api/items/published:", err);
-            res.status(500).json({ message: "No published items available" });
-        });
-});
-
-app.get("/api/categories", (req, res) => {
-    storeService.getCategories()
-        .then(data => res.json(data))
-        .catch(err => {
-            console.error("Error in /api/categories:", err);
-            res.status(500).json({ message: "No categories available" });
-        });
-});
-
-app.post("/items/add", upload.single("featureImage"), (req, res) => {
-    if (req.file) {
-        let streamUpload = (req) => {
-            return new Promise((resolve, reject) => {
-                let stream = cloudinary.uploader.upload_stream((error, result) => {
-                    if (result) resolve(result);
-                    else reject(error);
-                });
-                streamifier.createReadStream(req.file.buffer).pipe(stream);
-            });
-        };
-
-        async function uploadImage(req) {
-            let result = await streamUpload(req);
-            return result;
+        if (category) {
+            items = items.filter(item => item.category == category);
         }
 
-        uploadImage(req)
-            .then((uploaded) => processItem(uploaded.url))
-            .catch(err => {
-                console.error("Error uploading image:", err);
-                processItem("");
-            });
-    } else {
-        processItem("");
-    }
+        if (minDate) {
+            let filterDate = new Date(minDate).setHours(0, 0, 0, 0);
+            items = items.filter(item => new Date(item.postDate).setHours(0, 0, 0, 0) >= filterDate);
+        }
 
-    function processItem(imageUrl) {
-        req.body.featureImage = imageUrl;
-        storeService.addItem(req.body)
-            .then(() => res.redirect("/items"))
-            .catch(err => {
-                console.error("Error adding item:", err);
-                res.status(500).json({ error: err });
-            });
+        items.length > 0 ? res.json(items) : res.status(404).json({ message: "No items match the filters" });
+    } catch (err) {
+        console.error("Error in /api/items:", err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+app.get("/api/item/:id", async (req, res) => {
+    try {
+        let item = await storeService.getItemById(req.params.id);
+        res.json(item);
+    } catch (err) {
+        console.error(`Error in /api/item/${req.params.id}:`, err);
+        res.status(404).json({ message: "No result found" });
+    }
+});
+
+app.get("/api/items/published", async (req, res) => {
+    try {
+        let items = await storeService.getPublishedItems();
+        res.json(items);
+    } catch (err) {
+        console.error("Error in /api/items/published:", err);
+        res.status(404).json({ message: "No published items available" });
+    }
+});
+
+app.get("/api/categories", async (req, res) => {
+    try {
+        let categories = await storeService.getCategories();
+        res.json(categories);
+    } catch (err) {
+        console.error("Error in /api/categories:", err);
+        res.status(404).json({ message: "No categories available" });
+    }
+});
+
+app.post("/items/add", upload.single("featureImage"), async (req, res) => {
+    try {
+        if (req.file) {
+            let streamUpload = (req) => {
+                return new Promise((resolve, reject) => {
+                    let stream = cloudinary.uploader.upload_stream((error, result) => {
+                        if (result) resolve(result);
+                        else reject(error);
+                    });
+                    streamifier.createReadStream(req.file.buffer).pipe(stream);
+                });
+            };
+
+            let uploaded = await streamUpload(req);
+            req.body.featureImage = uploaded.url;
+        } else {
+            req.body.featureImage = "";
+        }
+
+        await storeService.addItem(req.body);
+        res.redirect("/items");
+    } catch (err) {
+        console.error("Error adding item:", err);
+        res.status(500).json({ error: "Unable to add item" });
     }
 });
 
@@ -134,9 +123,9 @@ app.use((req, res) => {
 
 storeService.initialize()
     .then(() => {
-        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+        app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
     })
     .catch(err => {
-        console.error(`Failed to start server: ${err}`);
+        console.error(`❌ Failed to start server: ${err}`);
         process.exit(1);
     });
