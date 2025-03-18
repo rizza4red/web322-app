@@ -1,22 +1,27 @@
 [
-    {
-       "id":1,
-       "category":"Home, Garden"
-    },
-    {
-       "id":2,
-       "category":"Electronics, Computers, Video Games"
-    },
-    {
-       "id":3,
-       "category":"Clothing"
-    },
-    {
-       "id":4,
-       "category":"Sports & Outdoors"
-    },
-    {
-       "id":5,
-       "category":"Pets"
-    }
- ]
+   {
+       "id": 1,
+       "category": "Home, Garden",
+       "image": "https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200"
+   },
+   {
+       "id": 2,
+       "category": "Electronics, Computers, Video Games",
+       "image": "https://images.pexels.com/photos/7915357/pexels-photo-7915357.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200"
+   },
+   {
+       "id": 3,
+       "category": "Clothing",
+       "image": "https://images.pexels.com/photos/1884584/pexels-photo-1884584.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200"
+   },
+   {
+       "id": 4,
+       "category": "Sports & Outdoors",
+       "image": "https://images.pexels.com/photos/30461455/pexels-photo-30461455.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200"
+   },
+   {
+       "id": 5,
+       "category": "Pets",
+       "image": "https://images.pexels.com/photos/3628100/pexels-photo-3628100.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200"
+   }
+]

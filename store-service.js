@@ -55,49 +55,16 @@ const addItem = (itemData) => {
 
         items.push(itemData);
 
-
         fs.writeFile(
             path.join(process.cwd(), "data", "items.json"),
             JSON.stringify(items, null, 4),
             (err) => {
-                if (err) {
-                    console.error("Error saving item:", err);
-                    return reject("Unable to save item.");
-                }
-                console.log("✅ Item saved to items.json:", itemData); 
+                if (err) return reject("Unable to save item.");
                 resolve(itemData);
             }
         );
     });
 };
-
-
-const getItemsByCategory = (category) => {
-    return new Promise((resolve, reject) => {
-        const filteredItems = items.filter(item => item.category == category);
-        filteredItems.length > 0 ? resolve(filteredItems) : reject("No items found for this category");
-    });
-};
-
-const getItemsByMinDate = (minDateStr) => {
-    return new Promise((resolve, reject) => {
-        let filterDate = new Date(minDateStr);
-        filterDate.setHours(0, 0, 0, 0);
-
-        const filteredItems = items.filter(item => {
-            let itemDate = new Date(item.postDate);
-            itemDate.setHours(0, 0, 0, 0);
-            return itemDate >= filterDate;
-        });
-
-        filteredItems.length > 0 ? resolve(filteredItems) : reject("No items found after this date");
-    });
-};
-
-
-
-
-
 
 const getItemById = (id) => {
     return new Promise((resolve, reject) => {
@@ -112,7 +79,5 @@ module.exports = {
     getPublishedItems,
     getCategories,
     addItem,
-    getItemsByCategory,
-    getItemsByMinDate,
     getItemById
 };

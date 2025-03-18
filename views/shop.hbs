@@ -1,0 +1,22 @@
+<div class="container" style="padding-top: 90px;">
+    <h1 class="text-center">Shop</h1>
+
+    {{#if items.length}}
+    <div class="row">
+        {{#each items}}
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{featureImage}}" class="card-img-top" alt="{{title}}">
+                <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p><strong>Price:</strong> ${{price}}</p>
+                    <p>{{body}}</p>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{else}}
+        <p class="text-center">No items available for sale.</p>
+    {{/if}}
+</div>

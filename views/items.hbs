@@ -1,0 +1,41 @@
+<div class="container" style="padding-top: 90px;">
+    <h1 class="text-center">Available Items</h1>
+
+    <!-- Filter Form -->
+    <form action="/items" method="GET" class="mb-3">
+        <label for="category">Filter by Category:</label>
+        <select name="category" id="category" class="form-control">
+            <option value="">All Categories</option>
+            {{#each categories}}
+                <option value="{{id}}" {{#if (equal ../selectedCategory id)}}selected{{/if}}>{{category}}</option>
+            {{/each}}
+        </select>
+
+        <label for="minDate" class="mt-2">Filter by Date:</label>
+        <input type="date" name="minDate" id="minDate" class="form-control" value="{{selectedMinDate}}">
+
+        <button type="submit" class="btn btn-primary mt-2">Apply Filters</button>
+    </form>
+
+    <!-- Items List -->
+    {{#if items.length}}
+    <div class="row">
+        {{#each items}}
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{{featureImage}}" class="card-img-top" alt="{{title}}">
+                <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p><strong>Category:</strong> {{category}}</p>
+                    <p><strong>Price:</strong> ${{price}}</p>
+                    <p><strong>Date Added:</strong> {{postDate}}</p>
+                    <p>{{body}}</p>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{else}}
+        <p class="text-center">No items available.</p>
+    {{/if}}
+</div>
