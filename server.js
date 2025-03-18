@@ -6,23 +6,20 @@
 *
 *  Name: Rizza Salvador  
 *  Student ID: 150401230  
-*  Date: March 4, 2025
+*  Date: March 18, 2025
 *  Render Web App URL: https://web322-app-dbb2.onrender.com
 *  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
 
 const express = require("express");
 const exphbs = require("express-handlebars");
-
 const storeService = require("./store-service");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
-
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Handlebars setup
 app.engine(".hbs", exphbs.engine({
     extname: ".hbs",
     helpers: {
@@ -44,7 +41,6 @@ const upload = multer();
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware for active navbar highlighting
 app.use((req, res, next) => {
     let route = req.path.substring(1);
     app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
@@ -52,10 +48,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Redirect root to /shop
 app.get("/", (req, res) => res.redirect("/shop"));
 
-// Handlebars view routes
 app.get("/about", (req, res) => res.render("about"));
 
 app.get("/shop", async (req, res) => {
@@ -73,7 +67,6 @@ app.get("/items", async (req, res) => {
         let items = await storeService.getAllItems();
         let categories = await storeService.getCategories();
 
-        // Apply filters
         if (category) {
             items = items.filter(item => item.category == category);
         }
@@ -104,7 +97,6 @@ app.get("/categories", async (req, res) => {
 
 app.get("/items/add", (req, res) => res.render("addItem"));
 
-// Handle item addition with Cloudinary image upload
 app.post("/items/add", upload.single("featureImage"), async (req, res) => {
     try {
         if (req.file) {
@@ -132,12 +124,10 @@ app.post("/items/add", upload.single("featureImage"), async (req, res) => {
     }
 });
 
-// 404 Error Page
 app.use((req, res) => {
     res.status(404).render("404");
 });
 
-// Start server
 storeService.initialize()
     .then(() => {
         app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
