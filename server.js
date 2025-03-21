@@ -20,14 +20,11 @@ const streamifier = require("streamifier");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Setup EJS
 app.set("view engine", "ejs");
 
-// Middleware
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
-// Cloudinary Config
 cloudinary.config({
     cloud_name: "dupzz5jsk",
     api_key: "294379793524562",
@@ -37,7 +34,6 @@ cloudinary.config({
 
 const upload = multer();
 
-// Routes
 app.get("/", (req, res) => res.redirect("/about"));
 
 app.get("/about", (req, res) => {
@@ -46,7 +42,7 @@ app.get("/about", (req, res) => {
 
 app.get("/shop", async (req, res) => {
     try {
-        let items = await storeService.getPublishedItems(); // Get only published items
+        let items = await storeService.getPublishedItems(); 
         res.render("shop", { title: "Shop", active: "shop", items });
     } catch (err) {
         console.error("Error loading shop items:", err);
@@ -56,8 +52,8 @@ app.get("/shop", async (req, res) => {
 
 app.get("/items", async (req, res) => {
     try {
-        let items = await storeService.getAllItems(); // Get all items
-        let categories = await storeService.getCategories(); // Fetch categories for dropdown
+        let items = await storeService.getAllItems(); 
+        let categories = await storeService.getCategories();
         res.render("items", { title: "Items", active: "items", items, categories });
     } catch (err) {
         console.error("Error loading items:", err);
@@ -75,7 +71,6 @@ app.get("/items/add", (req, res) => {
     res.render("addItem", { title: "Add Item", active: "add" });
 });
 
-// API Endpoints
 app.get("/api/items", async (req, res) => {
     let { category, minDate } = req.query;
 
@@ -128,7 +123,6 @@ app.get("/api/categories", async (req, res) => {
     }
 });
 
-// POST route for adding items
 app.post("/items/add", upload.single("featureImage"), async (req, res) => {
     try {
         if (req.file) {
@@ -156,12 +150,10 @@ app.post("/items/add", upload.single("featureImage"), async (req, res) => {
     }
 });
 
-// 404 Page
 app.use((req, res) => {
     res.status(404).render("404", { title: "404 - Not Found", active: "" });
 });
 
-// Start Server
 storeService.initialize()
     .then(() => {
         app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));

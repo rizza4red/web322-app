@@ -2,7 +2,6 @@
 
 <h1 class="text-center">Available Items</h1>
 
-<!-- Filter Form -->
 <form method="GET" action="/items" class="mb-3">
     <label for="category">Filter by Category:</label>
     <select name="category" id="category" class="form-control">
@@ -18,7 +17,6 @@
     <button type="submit" class="btn btn-primary mt-2">Apply Filters</button>
 </form>
 
-<!-- Items List -->
 <div class="row">
     <% if (items.length > 0) { %>
         <% items.forEach(item => { %>
