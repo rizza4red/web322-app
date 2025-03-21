@@ -6,29 +6,28 @@
 *
 *  Name: Rizza Salvador  
 *  Student ID: 150401230  
-*  Date: March 18, 2025
+*  Date: March 21, 2025
 *  Render Web App URL: https://web322-app-dbb2.onrender.com
 *  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
 
 const express = require("express");
-const exphbs = require("express-handlebars");
 const storeService = require("./store-service");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.engine(".hbs", exphbs.engine({
-    extname: ".hbs",
-    helpers: {
-        equal: (a, b) => a == b
-    }
-}));
+// Setup EJS
+app.set("view engine", "ejs");
 
-app.set("view engine", ".hbs");
+// Middleware
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 
+// Cloudinary Config
 cloudinary.config({
     cloud_name: "dupzz5jsk",
     api_key: "294379793524562",
@@ -38,65 +37,98 @@ cloudinary.config({
 
 const upload = multer();
 
-app.use(express.static("public"));
-app.use(express.urlencoded({ extended: true }));
+// Routes
+app.get("/", (req, res) => res.redirect("/about"));
 
-app.use((req, res, next) => {
-    let route = req.path.substring(1);
-    app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
-    app.locals.viewingCategory = req.query.category;
-    next();
+app.get("/about", (req, res) => {
+    res.render("about", { title: "About", active: "about" });
 });
-
-app.get("/", (req, res) => res.redirect("/shop"));
-
-app.get("/about", (req, res) => res.render("about"));
 
 app.get("/shop", async (req, res) => {
     try {
-        let items = await storeService.getPublishedItems();
-        res.render("shop", { items });
-    } catch {
-        res.render("shop", { message: "No published items available" });
+        let items = await storeService.getPublishedItems(); // Get only published items
+        res.render("shop", { title: "Shop", active: "shop", items });
+    } catch (err) {
+        console.error("Error loading shop items:", err);
+        res.render("shop", { title: "Shop", active: "shop", items: [] });
     }
 });
 
 app.get("/items", async (req, res) => {
     try {
-        let { category, minDate } = req.query;
+        let items = await storeService.getAllItems(); // Get all items
+        let categories = await storeService.getCategories(); // Fetch categories for dropdown
+        res.render("items", { title: "Items", active: "items", items, categories });
+    } catch (err) {
+        console.error("Error loading items:", err);
+        res.render("items", { title: "Items", active: "items", items: [], categories: [] });
+    }
+});
+
+
+
+app.get("/categories", (req, res) => {
+    res.render("categories", { title: "Categories", active: "categories" });
+});
+
+app.get("/items/add", (req, res) => {
+    res.render("addItem", { title: "Add Item", active: "add" });
+});
+
+// API Endpoints
+app.get("/api/items", async (req, res) => {
+    let { category, minDate } = req.query;
+
+    try {
         let items = await storeService.getAllItems();
-        let categories = await storeService.getCategories();
 
         if (category) {
             items = items.filter(item => item.category == category);
         }
+
         if (minDate) {
             let filterDate = new Date(minDate).setHours(0, 0, 0, 0);
             items = items.filter(item => new Date(item.postDate).setHours(0, 0, 0, 0) >= filterDate);
         }
 
-        res.render("items", { 
-            items, 
-            categories, 
-            selectedCategory: category || "", 
-            selectedMinDate: minDate || "" 
-        });
-    } catch {
-        res.render("items", { message: "No results found" });
+        items.length > 0 ? res.json(items) : res.status(404).json({ message: "No items match the filters" });
+    } catch (err) {
+        console.error("Error in /api/items:", err);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
-app.get("/categories", async (req, res) => {
+app.get("/api/item/:id", async (req, res) => {
+    try {
+        let item = await storeService.getItemById(req.params.id);
+        res.json(item);
+    } catch (err) {
+        console.error(`Error in /api/item/${req.params.id}:`, err);
+        res.status(404).json({ message: "No result found" });
+    }
+});
+
+app.get("/api/items/published", async (req, res) => {
+    try {
+        let items = await storeService.getPublishedItems();
+        res.json(items);
+    } catch (err) {
+        console.error("Error in /api/items/published:", err);
+        res.status(404).json({ message: "No published items available" });
+    }
+});
+
+app.get("/api/categories", async (req, res) => {
     try {
         let categories = await storeService.getCategories();
-        res.render("categories", { categories });
-    } catch {
-        res.render("categories", { message: "No categories available" });
+        res.json(categories);
+    } catch (err) {
+        console.error("Error in /api/categories:", err);
+        res.status(404).json({ message: "No categories available" });
     }
 });
 
-app.get("/items/add", (req, res) => res.render("addItem"));
-
+// POST route for adding items
 app.post("/items/add", upload.single("featureImage"), async (req, res) => {
     try {
         if (req.file) {
@@ -124,10 +156,12 @@ app.post("/items/add", upload.single("featureImage"), async (req, res) => {
     }
 });
 
+// 404 Page
 app.use((req, res) => {
-    res.status(404).render("404");
+    res.status(404).render("404", { title: "404 - Not Found", active: "" });
 });
 
+// Start Server
 storeService.initialize()
     .then(() => {
         app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));

@@ -1,0 +1,24 @@
+<%- include("partials/header", { title: "Shop", active: "shop" }) %>
+
+<h1 class="text-center">Shop</h1>
+
+<div class="row">
+    <% if (items.length > 0) { %>
+        <% items.forEach(item => { %>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="<%= item.featureImage %>" class="card-img-top" alt="<%= item.title %>">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= item.title %></h5>
+                        <p><strong>Price:</strong> $<%= item.price %></p>
+                        <p><%= item.body || "No description available." %></p>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p class="text-center">No items available for sale.</p>
+    <% } %>
+</div>
+
+<%- include("partials/footer") %>

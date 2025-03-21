@@ -1,0 +1,43 @@
+<%- include("partials/header", { title: "Items", active: "items" }) %>
+
+<h1 class="text-center">Available Items</h1>
+
+<!-- Filter Form -->
+<form method="GET" action="/items" class="mb-3">
+    <label for="category">Filter by Category:</label>
+    <select name="category" id="category" class="form-control">
+        <option value="">All Categories</option>
+        <% categories.forEach(cat => { %>
+            <option value="<%= cat.id %>"><%= cat.category %></option>
+        <% }); %>
+    </select>
+
+    <label for="minDate" class="mt-2">Filter by Date:</label>
+    <input type="date" name="minDate" id="minDate" class="form-control">
+
+    <button type="submit" class="btn btn-primary mt-2">Apply Filters</button>
+</form>
+
+<!-- Items List -->
+<div class="row">
+    <% if (items.length > 0) { %>
+        <% items.forEach(item => { %>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="<%= item.featureImage %>" class="card-img-top" alt="<%= item.title %>">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= item.title %></h5>
+                        <p><strong>Category:</strong> <%= categories.find(cat => cat.id == item.category)?.category || "Unknown" %></p>
+                        <p><strong>Price:</strong> $<%= item.price %></p>
+                        <p><strong>Date Added:</strong> <%= item.postDate %></p>
+                        <p><%= item.body || "No description available." %></p>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p class="text-center">No items available.</p>
+    <% } %>
+</div>
+
+<%- include("partials/footer") %>

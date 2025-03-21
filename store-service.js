@@ -35,10 +35,11 @@ const getAllItems = () => {
 
 const getPublishedItems = () => {
     return new Promise((resolve, reject) => {
-        const publishedItems = items.filter(item => item.published);
+        const publishedItems = items.filter(item => item.published); 
         publishedItems.length > 0 ? resolve(publishedItems) : reject("No published items available");
     });
 };
+
 
 const getCategories = () => {
     return new Promise((resolve, reject) => {
