@@ -7,7 +7,7 @@
 *  Name: Rizza Salvador  
 *  Student ID: 150401230  
 *  Date: April 8, 2025
-*  Cyclic Web App URL: _____________________________________________
+*  Render Web App URL: https://web322-app-dbb2.onrender.com
 *  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
 
@@ -24,7 +24,6 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
-// Format date for EJS views
 app.locals.formatDate = function (dateObj) {
     let year = dateObj.getFullYear();
     let month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
@@ -32,7 +31,6 @@ app.locals.formatDate = function (dateObj) {
     return `${year}-${month}-${day}`;
 };
 
-// Cloudinary config
 cloudinary.config({
     cloud_name: "dupzz5jsk",
     api_key: "294379793524562",
@@ -41,7 +39,6 @@ cloudinary.config({
 });
 const upload = multer();
 
-// Routes
 app.get("/", (req, res) => res.redirect("/about"));
 
 app.get("/about", (req, res) => {
@@ -142,7 +139,6 @@ app.get("/categories/delete/:id", async (req, res) => {
     }
 });
 
-// API endpoints (optional to update)
 app.get("/api/items", async (req, res) => {
     const { category, minDate } = req.query;
     try {
@@ -186,12 +182,10 @@ app.get("/api/categories", async (req, res) => {
     }
 });
 
-// 404 Handler
 app.use((req, res) => {
     res.status(404).render("404", { title: "404 - Not Found", active: "" });
 });
 
-// Initialize database then start server
 storeService.initialize()
     .then(() => {
         app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
