@@ -1,0 +1,10 @@
+<%- include("partials/header", { title: "Add Category", active: "categories" }) %>
+<h1 class="text-center">Add Category</h1>
+<form method="POST" action="/categories/add" class="p-4 bg-light text-dark rounded">
+    <div class="mb-3">
+        <label for="category" class="form-label">Category:</label>
+        <input type="text" name="category" id="category" class="form-control" required autofocus>
+    </div>
+    <button type="submit" class="btn btn-success w-100">Add Category</button>
+</form>
+<%- include("partials/footer") %>

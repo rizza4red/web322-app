@@ -2,6 +2,8 @@
 
 <h1 class="text-center">Available Items</h1>
 
+<a href="/items/add" class="btn btn-success mb-3">Add Item</a>
+
 <form method="GET" action="/items" class="mb-3">
     <label for="category">Filter by Category:</label>
     <select name="category" id="category" class="form-control">
@@ -21,14 +23,15 @@
     <% if (items.length > 0) { %>
         <% items.forEach(item => { %>
             <div class="col-md-4">
-                <div class="card">
+                <div class="card mb-3">
                     <img src="<%= item.featureImage %>" class="card-img-top" alt="<%= item.title %>">
                     <div class="card-body">
                         <h5 class="card-title"><%= item.title %></h5>
                         <p><strong>Category:</strong> <%= categories.find(cat => cat.id == item.category)?.category || "Unknown" %></p>
                         <p><strong>Price:</strong> $<%= item.price %></p>
-                        <p><strong>Date Added:</strong> <%= item.postDate %></p>
+                        <p><strong>Date Added:</strong> <%= formatDate(new Date(item.postDate)) %></p>
                         <p><%= item.body || "No description available." %></p>
+                        <a href="/items/delete/<%= item.id %>" class="btn btn-danger mt-2">Remove</a>
                     </div>
                 </div>
             </div>

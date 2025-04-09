@@ -15,12 +15,11 @@
     <div class="mb-3">
         <label for="category" class="form-label">Category:</label>
         <select class="form-select" name="category" id="category" required>
-            <option value="1">Home & Garden</option>
-            <option value="2">Electronics</option>
-            <option value="3">Clothing</option>
-            <option value="4">Sports & Outdoors</option>
-            <option value="5">Pets</option>
+            <% categories.forEach(cat => { %>
+                <option value="<%= cat.id %>"><%= cat.category %></option>
+            <% }) %>
         </select>
+        
     </div>
 
     <div class="mb-3">
