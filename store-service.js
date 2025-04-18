@@ -23,8 +23,14 @@ let Category;
 module.exports.initialize = function () {
   return new Promise((resolve, reject) => {
     const db = mongoose.createConnection(
-      "mongodb+srv://web322_user:web322pass123@cluster0.rd6wo8l.mongodb.net/web322_store?retryWrites=true&w=majority"
-    );
+        "mongodb+srv://web322_user:web322pass123@cluster0.rd6wo8l.mongodb.net/web322_store?retryWrites=true&w=majority",
+        {
+          tls: true, // 🔒 ensure TLS is used
+          tlsAllowInvalidCertificates: false, // 🚫 never accept invalid certs
+          tlsInsecure: false,
+          useNewUrlParser: true,
+          useUnifiedTopology: true
+        }
 
     db.on("error", err => reject(err));
     db.once("open", () => {
