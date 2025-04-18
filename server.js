@@ -8,7 +8,7 @@
 *  Student ID: 150401230
 *  Date: April 18, 2025
 *
-*  Cyclic Web App URL: _______________________________
+*  Cyclic Web App URL: https://web322-app-dbb2.onrender.com
 *  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
 
