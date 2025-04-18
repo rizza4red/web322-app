@@ -19,7 +19,7 @@ let User;
 module.exports.initialize = function () {
     return new Promise((resolve, reject) => {
         let db = mongoose.createConnection(
-            "mongodb+srv://web322_user:web322pass123@cluster0.rd6wo8l.mongodb.net/web322_users?retryWrites=true&w=majority&ssl=true"
+            "mongodb+srv://web322_user:web322pass123@cluster0.rd6wo8l.mongodb.net/web322_store?retryWrites=true&w=majority"
           );
           
 
