@@ -1,0 +1,16 @@
+<%- include("partials/header", { title: "User History" }) %>
+<h2><%= session.user.userName %> (<%= session.user.email %>) History</h2>
+<table class="table">
+    <thead>
+        <tr><th>Login Date/Time</th><th>Client Info</th></tr>
+    </thead>
+    <tbody>
+        <% session.user.loginHistory.forEach(history => { %>
+            <tr>
+                <td><%= history.dateTime %></td>
+                <td><%= history.userAgent %></td>
+            </tr>
+        <% }); %>
+    </tbody>
+</table>
+<%- include("partials/footer") %>

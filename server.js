@@ -1,13 +1,14 @@
 /*********************************************************************************
-*  WEB322 – Assignment 05
-*  I declare that this assignment is my own work in accordance with Seneca Academic Policy.  
+*  WEB322 – Assignment 06
+*  I declare that this assignment is my own work in accordance with Seneca Academic Policy.
 *  No part of this assignment has been copied manually or electronically from any other source 
-*  (including 3rd party websites) or distributed to other students.
+*  (including web sites) or distributed to other students.
 *
-*  Name: Rizza Salvador  
-*  Student ID: 150401230  
-*  Date: April 8, 2025
-*  Render Web App URL: https://web322-app-dbb2.onrender.com
+*  Name: Rizza Salvador
+*  Student ID: 150401230
+*  Date: April 18, 2025
+*
+*  Cyclic Web App URL: _______________________________
 *  GitHub Repository URL: https://github.com/rizza4red/web322-app
 **********************************************************************************/
 
@@ -16,6 +17,8 @@ const storeService = require("./store-service");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
+const authData = require("./auth-service");
+const clientSessions = require("client-sessions");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -39,6 +42,26 @@ cloudinary.config({
 });
 const upload = multer();
 
+app.use(clientSessions({
+    cookieName: "session",
+    secret: "superSecret123",
+    duration: 2 * 60 * 1000,
+    activeDuration: 1000 * 60
+}));
+
+app.use((req, res, next) => {
+    res.locals.session = req.session;
+    next();
+});
+
+function ensureLogin(req, res, next) {
+    if (!req.session.user) {
+        res.redirect("/login");
+    } else {
+        next();
+    }
+}
+
 app.get("/", (req, res) => res.redirect("/about"));
 
 app.get("/about", (req, res) => {
@@ -54,7 +77,74 @@ app.get("/shop", async (req, res) => {
     }
 });
 
-app.get("/items", async (req, res) => {
+app.get("/register", (req, res) => {
+    res.render("register", {
+        title: "Register",
+        active: "register",
+        errorMessage: undefined,
+        successMessage: undefined,
+        userName: ''
+    });
+});
+
+
+app.post("/register", (req, res) => {
+    authData.registerUser(req.body)
+        .then(() => res.render("register", {
+            successMessage: "User created",
+            title: "Register",
+            active: "register"
+        }))
+        .catch(err => res.render("register", {
+            errorMessage: err,
+            userName: req.body.userName,
+            title: "Register",
+            active: "register"
+        }));
+});
+
+app.get("/login", (req, res) => {
+    res.render("login", {
+        title: "Login",
+        active: "login",
+        errorMessage: undefined,
+        userName: ''
+    });
+});
+
+
+app.post("/login", (req, res) => {
+    req.body.userAgent = req.get('User-Agent');
+
+    authData.checkUser(req.body)
+        .then(user => {
+            req.session.user = {
+                userName: user.userName,
+                email: user.email,
+                loginHistory: user.loginHistory
+            };
+            res.redirect("/items");
+        })
+        .catch(err => {
+            res.render("login", {
+                errorMessage: err,
+                userName: req.body.userName,
+                title: "Login",
+                active: "login"
+            });
+        });
+});
+
+app.get("/logout", (req, res) => {
+    req.session.reset();
+    res.redirect("/");
+});
+
+app.get("/userHistory", ensureLogin, (req, res) => {
+    res.render("userHistory", { title: "User History" });
+});
+
+app.get("/items", ensureLogin, async (req, res) => {
     try {
         const items = await storeService.getAllItems();
         const categories = await storeService.getCategories();
@@ -64,7 +154,7 @@ app.get("/items", async (req, res) => {
     }
 });
 
-app.get("/items/add", async (req, res) => {
+app.get("/items/add", ensureLogin, async (req, res) => {
     try {
         const categories = await storeService.getCategories();
         res.render("addItem", { title: "Add Item", active: "add", categories });
@@ -73,7 +163,7 @@ app.get("/items/add", async (req, res) => {
     }
 });
 
-app.post("/items/add", upload.single("featureImage"), async (req, res) => {
+app.post("/items/add", ensureLogin, upload.single("featureImage"), async (req, res) => {
     try {
         if (req.file) {
             const streamUpload = (req) => {
@@ -98,7 +188,7 @@ app.post("/items/add", upload.single("featureImage"), async (req, res) => {
     }
 });
 
-app.get("/items/delete/:id", async (req, res) => {
+app.get("/items/delete/:id", ensureLogin, async (req, res) => {
     try {
         await storeService.deletePostById(req.params.id);
         res.redirect("/items");
@@ -107,7 +197,7 @@ app.get("/items/delete/:id", async (req, res) => {
     }
 });
 
-app.get("/categories", async (req, res) => {
+app.get("/categories", ensureLogin, async (req, res) => {
     try {
         const categories = await storeService.getCategories();
         res.render("categories", { title: "Categories", active: "categories", categories });
@@ -116,11 +206,11 @@ app.get("/categories", async (req, res) => {
     }
 });
 
-app.get("/categories/add", (req, res) => {
+app.get("/categories/add", ensureLogin, (req, res) => {
     res.render("addCategory", { title: "Add Category", active: "categories" });
 });
 
-app.post("/categories/add", async (req, res) => {
+app.post("/categories/add", ensureLogin, async (req, res) => {
     try {
         await storeService.addCategory(req.body);
         res.redirect("/categories");
@@ -130,7 +220,7 @@ app.post("/categories/add", async (req, res) => {
     }
 });
 
-app.get("/categories/delete/:id", async (req, res) => {
+app.get("/categories/delete/:id", ensureLogin, async (req, res) => {
     try {
         await storeService.deleteCategoryById(req.params.id);
         res.redirect("/categories");
@@ -187,6 +277,7 @@ app.use((req, res) => {
 });
 
 storeService.initialize()
+    .then(authData.initialize)
     .then(() => {
         app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
     })
